@@ -27,7 +27,8 @@ class SshCommandRunner(CommandRunner):
         self._child_runner = child_runner
 
     def run(self, command):
-        spawn = self._child_runner.run(f'ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no {self._username}@{self._hostname} {shlex.quote(command)}')
+        spawn = self._child_runner.run(
+            f'ssh -t -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o PasswordAuthentication=yes -o PreferredAuthentications=keyboard-interactive,password -o PubkeyAuthentication=no {self._username}@{self._hostname} {shlex.quote(command)}')
         assert spawn.expect([f"{self._username}@{self._hostname}'s password: ", pexpect.EOF]) == 0, spawn.before
         spawn.sendline(self._password)
         assert spawn.expect(['\r\n', pexpect.EOF], timeout=0.1) == 0
